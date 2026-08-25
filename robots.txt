@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin.html
 Disallow: /cms/
 
-Sitemap: https://VOTRE-DOMAINE.COM/sitemap.xml
+Sitemap: https://oscart-production.vercel.app/sitemap.xml
