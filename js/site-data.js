@@ -100,10 +100,16 @@
     var def = defaults().site;
     D.site = merge(def, files.site || {});
     if(LOCAL.site) D.site = merge(D.site, LOCAL.site);
-    D.portfolio = Array.isArray(LOCAL.portfolio) ? LOCAL.portfolio : (files.portfolio || []);
-    D.team      = Array.isArray(LOCAL.team)      ? LOCAL.team      : (files.team || []);
-    D.services  = Array.isArray(LOCAL.services)  ? LOCAL.services  : (files.services || []);
-    D.gallery   = Array.isArray(LOCAL.gallery)   ? LOCAL.gallery   : (Array.isArray(files.gallery) ? files.gallery : []);
+    /* accepte un tableau nu OU l'objet {cle: [...]} écrit par le CMS Decap */
+    function arr(v, key){
+      if(Array.isArray(v)) return v;
+      if(v && typeof v === 'object' && Array.isArray(v[key])) return v[key];
+      return [];
+    }
+    D.portfolio = Array.isArray(LOCAL.portfolio) ? LOCAL.portfolio : arr(files.portfolio, 'portfolio');
+    D.team      = Array.isArray(LOCAL.team)      ? LOCAL.team      : arr(files.team, 'team');
+    D.services  = Array.isArray(LOCAL.services)  ? LOCAL.services  : arr(files.services, 'services');
+    D.gallery   = Array.isArray(LOCAL.gallery)   ? LOCAL.gallery   : arr(files.gallery, 'gallery');
   }
 
   /* ================= REGLAGES DU SITE ================= */

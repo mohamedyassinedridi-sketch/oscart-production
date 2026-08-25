@@ -73,70 +73,98 @@ CMS.init({
       {
         name: 'portfolio',
         label: '🎬 Portfolio',
-        file: 'data/portfolio.json',
         editor: { preview: false },
-        fields: [
-          { name: 'portfolio', label: 'Projets', widget: 'list', fields: [
-            { name: 'title',    label: 'Titre *',       widget: 'string' },
-            { name: 'category', label: 'Catégorie',     widget: 'select', options: [
-              { label: 'Film',         value: 'film'  },
-              { label: 'Clip',         value: 'clip'  },
-              { label: 'Documentaire', value: 'doc'   },
-              { label: 'Publicité',    value: 'pub'   },
-              { label: 'Événement',    value: 'event' }
-            ]},
-            { name: 'subtitle', label: 'Sous-titre',    widget: 'string', required: false },
-            { name: 'tags',     label: 'Tags',          widget: 'string', required: false },
-            { name: 'thumb',    label: 'Vignette',      widget: 'image',  required: false },
-            { name: 'video',    label: 'URL vidéo YouTube/Vimeo', widget: 'string', required: false },
-            { name: 'client',   label: 'Client',        widget: 'string', required: false },
-            { name: 'year',     label: 'Année',         widget: 'string', required: false },
-            { name: 'desc',     label: 'Description',   widget: 'text',   required: false }
-          ]}
+        files: [
+          {
+            name: 'portfolio',
+            label: 'Projets vidéo',
+            file: 'data/portfolio.json',
+            editor: { preview: false },
+            fields: [
+              { name: 'portfolio', label: 'Projets', widget: 'list', fields: [
+                { name: 'title',    label: 'Titre *',       widget: 'string' },
+                { name: 'category', label: 'Catégorie',     widget: 'select', options: [
+                  { label: 'Film',         value: 'film'  },
+                  { label: 'Clip',         value: 'clip'  },
+                  { label: 'Documentaire', value: 'doc'   },
+                  { label: 'Publicité',    value: 'pub'   },
+                  { label: 'Événement',    value: 'event' }
+                ]},
+                { name: 'subtitle', label: 'Sous-titre',    widget: 'string', required: false },
+                { name: 'tags',     label: 'Tags',          widget: 'string', required: false },
+                { name: 'thumb',    label: 'Vignette',      widget: 'image',  required: false },
+                { name: 'video',    label: 'URL vidéo YouTube/Vimeo', widget: 'string', required: false },
+                { name: 'client',   label: 'Client',        widget: 'string', required: false },
+                { name: 'year',     label: 'Année',         widget: 'string', required: false },
+                { name: 'desc',     label: 'Description',   widget: 'text',   required: false }
+              ]}
+            ]
+          }
         ]
       },
       {
         name: 'team',
         label: '👥 Équipe',
-        file: 'data/team.json',
         editor: { preview: false },
-        fields: [
-          { name: 'team', label: 'Membres', widget: 'list', fields: [
-            { name: 'name',  label: 'Nom *',  widget: 'string' },
-            { name: 'role',  label: 'Rôle',   widget: 'string', required: false },
-            { name: 'bio',   label: 'Bio',    widget: 'text',   required: false },
-            { name: 'photo', label: 'Photo',  widget: 'image',  required: false }
-          ]}
+        files: [
+          {
+            name: 'team',
+            label: 'Membres',
+            file: 'data/team.json',
+            editor: { preview: false },
+            fields: [
+              { name: 'team', label: 'Membres', widget: 'list', fields: [
+                { name: 'name',  label: 'Nom *',  widget: 'string' },
+                { name: 'role',  label: 'Rôle',   widget: 'string', required: false },
+                { name: 'bio',   label: 'Bio',    widget: 'text',   required: false },
+                { name: 'photo', label: 'Photo',  widget: 'image',  required: false }
+              ]}
+            ]
+          }
         ]
       },
       {
         name: 'services',
         label: '🛠 Services',
-        file: 'data/services.json',
         editor: { preview: false },
-        fields: [
-          { name: 'services', label: 'Services', widget: 'list', fields: [
-            { name: 'id',     label: 'Identifiant ancre (ex. films)', widget: 'string' },
-            { name: 'icon',   label: 'Icône emoji',                   widget: 'string' },
-            { name: 'tag',    label: 'Étiquette (ex. 01 · Cinéma)',   widget: 'string' },
-            { name: 'title',  label: 'Titre *',                       widget: 'string' },
-            { name: 'text',   label: "Texte accueil (court)",         widget: 'text' },
-            { name: 'detail', label: 'Texte détaillé',                widget: 'text' },
-            { name: 'items',  label: 'Points forts',                  widget: 'list', field: { name: 'item', label: 'Point', widget: 'string' } }
-          ]}
+        files: [
+          {
+            name: 'services',
+            label: 'Offres',
+            file: 'data/services.json',
+            editor: { preview: false },
+            fields: [
+              { name: 'services', label: 'Services', widget: 'list', fields: [
+                { name: 'id',     label: 'Identifiant ancre (ex. films)', widget: 'string' },
+                { name: 'icon',   label: 'Icône emoji',                   widget: 'string' },
+                { name: 'tag',    label: 'Étiquette (ex. 01 · Cinéma)',   widget: 'string' },
+                { name: 'title',  label: 'Titre *',                       widget: 'string' },
+                { name: 'text',   label: "Texte accueil (court)",         widget: 'text' },
+                { name: 'detail', label: 'Texte détaillé',                widget: 'text' },
+                { name: 'items',  label: 'Points forts',                  widget: 'list', field: { name: 'item', label: 'Point', widget: 'string' } }
+              ]}
+            ]
+          }
         ]
       },
       {
         name: 'gallery',
         label: '📸 Galerie photo',
-        file: 'data/gallery.json',
         editor: { preview: false },
-        fields: [
-          { name: 'gallery', label: 'Photos', widget: 'list', fields: [
-            { name: 'src',   label: 'Image', widget: 'image' },
-            { name: 'title', label: 'Titre (légende)', widget: 'string', required: false },
-            { name: 'album', label: 'Album (regroupement)', widget: 'string', required: false }
-          ]}
+        files: [
+          {
+            name: 'gallery',
+            label: 'Photos & albums',
+            file: 'data/gallery.json',
+            editor: { preview: false },
+            fields: [
+              { name: 'gallery', label: 'Photos', widget: 'list', fields: [
+                { name: 'src',   label: 'Image', widget: 'image' },
+                { name: 'title', label: 'Titre (légende)', widget: 'string', required: false },
+                { name: 'album', label: 'Album (regroupement)', widget: 'string', required: false }
+              ]}
+            ]
+          }
         ]
       }
     ]
