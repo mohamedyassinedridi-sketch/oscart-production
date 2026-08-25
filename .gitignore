@@ -1,0 +1,8 @@
+# Médias lourds — hébergés séparément (YouTube/Vimeo)
+portfolio/videos/
+portfolio/photos/
+
+# Système
+.DS_Store
+*.log
+.vercel

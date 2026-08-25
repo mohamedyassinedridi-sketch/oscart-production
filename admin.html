@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Administration — OSC'ART Production</title>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-height:100vh;padding:32px 20px 120px;margin:0}
+  .admin-wrap{max-width:900px;margin:0 auto}
+  .admin-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+  .admin-head h1{font-family:var(--font-serif);font-size:1.8rem;margin:0}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+  .tab{padding:10px 20px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-weight:600;font-size:.9rem;cursor:pointer;font-family:inherit}
+  .tab.active{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#111;border-color:transparent}
+  .panel{display:none}
+  .panel.active{display:block}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:18px}
+  .card h2{font-size:1.1rem;margin:0 0 4px}
+  .card p.hint{color:var(--text-3);font-size:.82rem;margin:0 0 16px}
+  .item-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;margin-bottom:14px;position:relative}
+  .item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
+  .item-head strong{color:var(--gold);font-size:.92rem}
+  .del-btn{background:none;border:none;color:var(--accent);cursor:pointer;font-size:.85rem;font-weight:600;padding:4px 8px}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:640px){.grid-2,.grid-3{grid-template-columns:1fr}}
+  label.field{display:block;font-size:.8rem;color:var(--text-2);font-weight:500;margin-bottom:2px}
+  input[type=text],input[type=url],select,textarea{width:100%;box-sizing:border-box;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 12px;font-size:.9rem;font-family:inherit}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+  select option{background:var(--bg-2)}
+  textarea{resize:vertical;min-height:60px}
+  .img-row{display:flex;gap:12px;align-items:center;margin-top:10px}
+  .img-row img{width:110px;height:62px;object-fit:cover;border-radius:6px;background:#000;border:1px solid var(--border)}
+  .btn-sm{padding:7px 14px;font-size:.8rem;border-radius:50px;cursor:pointer;font-weight:600;border:1px solid var(--border);background:var(--bg-3);color:var(--text);font-family:inherit}
+  .btn-sm:hover{border-color:var(--gold)}
+  .add-btn{width:100%;padding:14px;border-style:dashed}
+  .save-bar{position:fixed;bottom:0;left:0;right:0;padding:14px;display:flex;justify-content:center;gap:12px;background:rgba(10,10,12,.85);backdrop-filter:blur(10px);border-top:1px solid var(--border)}
+  .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#111;border:none;padding:13px 34px;border-radius:50px;font-weight:700;font-size:.95rem;cursor:pointer;font-family:inherit}
+  #toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--gold);color:#111;font-weight:700;padding:13px 26px;border-radius:50px;transition:.35s;opacity:0;z-index:99}
+  #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .back-link{color:var(--text-3);font-size:.88rem;text-decoration:none}
+  .back-link:hover{color:var(--gold)}
+  .stat-row{display:flex;gap:12px;margin-bottom:10px}
+  .stat-row label:first-child{flex:0 0 120px}
+  .stat-row label:last-child{flex:1}
+  .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .gal-cell{background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px}
+  .gal-cell img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;background:#000}
+  .gal-cell input{font-size:.75rem;padding:6px 8px}
+  .gal-actions{display:flex;gap:6px}
+  .gal-actions .btn-sm{padding:4px 9px;font-size:.78rem}
+  .note{font-size:.78rem;color:var(--text-3);line-height:1.6}
+
+  /* ===== Écran de connexion ===== */
+  body.locked .admin-wrap,body.locked .save-bar{display:none!important}
+  #loginGate{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+  .login-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:42px 36px;width:min(400px,92vw);text-align:center;box-shadow:var(--shadow)}
+  .login-box h1{font-family:var(--font-serif);font-size:1.5rem;margin:0 0 4px;color:#fff}
+  .login-box p{color:var(--text-3);font-size:.85rem;margin:0 0 22px}
+  .login-box input{width:100%;box-sizing:border-box;background:var(--bg-3);border:1px solid var(--border);border-radius:50px;color:var(--text);padding:13px 20px;font-size:.95rem;text-align:center;letter-spacing:.08em}
+  .login-box input:focus{outline:none;border-color:var(--gold)}
+  .login-btn{width:100%;margin-top:14px;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#111;border:none;padding:13px;border-radius:50px;font-weight:700;font-size:.95rem;cursor:pointer;font-family:inherit}
+  #pwErr{color:var(--accent);font-size:.82rem;min-height:18px;margin-top:12px;font-weight:500}
+</style>
+</head>
+<body>
+
+<!-- ===== VERROU ADMIN ===== -->
+<div id="loginGate">
+  <form class="login-box" id="pwForm" autocomplete="off">
+    <h1>🔒 Espace administrateur</h1>
+    <p>OSC'ART Production — accès protégé</p>
+    <input type="password" id="pw" placeholder="Mot de passe" autofocus>
+    <button type="submit" class="login-btn">Se connecter</button>
+    <div id="pwErr"></div>
+  </form>
+</div>
+
+<script>
+/* Authentification admin — le mot de passe n'est jamais stocké en clair :
+   seule son empreinte SHA-256 est conservée ici. */
+(function(){
+  var HASH = 'e5cd672f308f431ddab36ec122a0c143e7cf749aff4d0e8fc086b0b608a2a75f';
+  var FLAG = 'oscart_admin_ok';
+  var LOCK_KEY = 'oscart_admin_lock';
+  var MAX_TRIES = 5, LOCK_MS = 60000;
+
+  function lockInfo(){
+    try{ return JSON.parse(sessionStorage.getItem(LOCK_KEY)) || {n:0,t:0}; }
+    catch(e){ return {n:0,t:0}; }
+  }
+
+  if(sessionStorage.getItem(FLAG) === '1'){
+    window.__adminAuthed = true;
+    return;
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    document.body.classList.add('locked');
+    var gate = document.getElementById('loginGate');
+    if(!gate) return;
+    gate.style.display = 'flex';
+    document.getElementById('pwForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      var input = document.getElementById('pw');
+      var err = document.getElementById('pwErr');
+      err.textContent = '';
+      /* Anti force-brute : verrouillage après 5 échecs */
+      var lk = lockInfo();
+      var remain = lk.t - Date.now();
+      if(lk.n >= MAX_TRIES && remain > 0){
+        err.textContent = 'Trop de tentatives — réessayez dans ' + Math.ceil(remain/1000) + ' s.';
+        input.value = '';
+        return;
+      }
+      try{
+        var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input.value));
+        var hex = Array.prototype.map.call(new Uint8Array(buf), function(b){
+          return ('0'+b.toString(16)).slice(-2);
+        }).join('');
+        if(hex === HASH){
+          sessionStorage.removeItem(LOCK_KEY);
+          sessionStorage.setItem(FLAG, '1');
+          location.reload();
+        } else {
+          lk.n = (lk.n >= MAX_TRIES && remain <= 0) ? 1 : lk.n + 1;
+          lk.t = lk.n >= MAX_TRIES ? Date.now() + LOCK_MS : 0;
+          sessionStorage.setItem(LOCK_KEY, JSON.stringify(lk));
+          var left = MAX_TRIES - lk.n;
+          err.textContent = left > 0
+            ? 'Mot de passe incorrect (' + left + ' tentative' + (left>1?'s':'') + ' restante' + (left>1?'s':'') + ').'
+            : 'Trop de tentatives — réessayez dans 60 s.';
+        }
+      }catch(cryptoErr){
+        err.textContent = "Chiffrement indisponible : ouvrez la page via http://localhost ou https://";
+      }
+      input.value = '';
+    });
+  });
+})();
+</script>
+<div class="admin-wrap">
+  <div class="admin-head">
+    <h1>🎬 Administration du site</h1>
+    <div style="display:flex;gap:14px;align-items:center">
+      <a class="back-link" href="index.html">← Voir le site</a>
+      <button class="btn-sm" id="logoutBtn" title="Fermer la session">🔒 Déconnexion</button>
+    </div>
+  </div>
+
+  <p style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.35);border-radius:10px;padding:12px 16px;color:var(--gold,#d4af37);font-size:.85rem;margin:0 0 18px">
+    ⚠️ Vos modifications ici sont visibles <strong>uniquement sur ce navigateur</strong>. Pour publier pour tout le monde : exportez les données (onglet 💾) ou utilisez le CMS en ligne après déploiement.
+  </p>
+
+  <div class="tabs" id="tabs"></div>
+
+  <!-- ===== ONGLET SITE ===== -->
+  <div class="panel" data-panel="site">
+    <section class="card">
+      <h2>📍 Coordonnées</h2>
+      <p class="hint">Pied de page de toutes les pages + page Contact.</p>
+      <div class="grid-3">
+        <label class="field"><span>Téléphone</span><input type="text" id="f-phone" placeholder="+33 6 12 34 56 78"></label>
+        <label class="field"><span>Email général</span><input type="text" id="f-email" placeholder="contact@exemple.fr"></label>
+        <label class="field"><span>Adresse</span><input type="text" id="f-address" placeholder="12 rue... 75000 Paris"></label>
+      </div>
+    </section>
+    <section class="card">
+      <h2>🔗 Réseaux sociaux</h2>
+      <p class="hint">Laissez vide pour ignorer un réseau.</p>
+      <div class="grid-2">
+        <label class="field"><span>Instagram</span><input type="url" id="s-instagram" placeholder="https://instagram.com/..."></label>
+        <label class="field"><span>YouTube</span><input type="url" id="s-youtube" placeholder="https://youtube.com/@..."></label>
+        <label class="field"><span>Vimeo</span><input type="url" id="s-vimeo" placeholder="https://vimeo.com/..."></label>
+        <label class="field"><span>LinkedIn</span><input type="url" id="s-linkedin" placeholder="https://linkedin.com/company/..."></label>
+        <label class="field"><span>TikTok</span><input type="url" id="s-tiktok" placeholder="https://tiktok.com/@..."></label>
+      </div>
+    </section>
+    <section class="card">
+      <h2>📊 Chiffres de l'accueil</h2>
+      <p class="hint">Les 4 statistiques sous le grand titre.</p>
+      <div id="statsRows"></div>
+    </section>
+    <section class="card">
+      <h2>🎥 Showreel (accueil)</h2>
+      <p class="hint">URL YouTube ou Vimeo — conversion automatique en lecteur intégré.</p>
+      <label class="field"><span>URL de la vidéo</span><input type="url" id="f-showreel" placeholder="https://www.youtube.com/watch?v=..."></label>
+    </section>
+    <section class="card">
+      <h2>🖼️ Logo & fond d'accueil</h2>
+      <div style="display:grid;gap:12px">
+        <div class="img-row"><img id="prev-logo" src=""><div><strong style="font-size:.88rem">Logo</strong><br>
+          <button class="btn-sm" data-up="site.media.logo">📤 Changer</button></div></div>
+        <div class="img-row"><img id="prev-hero" src="" style="display:none"><div><strong style="font-size:.88rem">Fond de la page d'accueil</strong><br>
+          <button class="btn-sm" data-up="site.media.hero">📤 Changer</button></div></div>
+      </div>
+      <input type="file" id="fileUp" accept="image/*" hidden>
+    </section>
+  </div>
+
+  <!-- ===== ONGLETS COLLECTIONS (portfolio / team / services) ===== -->
+  <div class="panel" data-panel="portfolio">
+    <section class="card">
+      <h2>🎬 Portfolio</h2>
+      <p class="hint">Vignette : image 16:9 légère (&lt;300 Ko). Vidéo : URL YouTube/Vimeo affichée dans la lightbox.</p>
+      <div id="col-portfolio"></div>
+      <button class="btn-sm add-btn" data-add="portfolio">+ Ajouter un projet</button>
+    </section>
+  </div>
+  <div class="panel" data-panel="team">
+    <section class="card">
+      <h2>👥 Équipe</h2>
+      <p class="hint">Photo : portrait carré si possible.</p>
+      <div id="col-team"></div>
+      <button class="btn-sm add-btn" data-add="team">+ Ajouter un membre</button>
+    </section>
+  </div>
+  <div class="panel" data-panel="services">
+    <section class="card">
+      <h2>🛠 Services</h2>
+      <p class="hint">« Texte accueil » = résumé sur la home · « Texte détaillé » = paragraphe sur la page Services. « Points » : une ligne par point.</p>
+      <div id="col-services"></div>
+      <button class="btn-sm add-btn" data-add="services">+ Ajouter un service</button>
+    </section>
+  </div>
+
+  <!-- ===== ONGLET DONNEES ===== -->
+  <div class="panel" data-panel="galerie">
+    <section class="card">
+      <h2>📸 Galerie photo</h2>
+      <p class="hint">Organisez vos photos : <strong>titre</strong> (légende au survol), <strong>album</strong> (regroupe les photos sous une carte avec badge « N photos » — la 1ʳᵉ de l'album sert de couverture, ou cliquez ⭐ pour choisir), ordre avec ← →, suppression avec ✕.</p>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+        <button class="btn-sm" id="galAddBtn">＋ Ajouter des photos</button>
+        <input type="file" id="galFiles" accept="image/*" multiple hidden>
+        <input type="search" id="galSearch" placeholder="🔎 Rechercher un album / titre…" style="flex:1;min-width:220px;background:#1c1c20;border:1px solid #33333a;color:#fff;border-radius:8px;padding:9px 12px;font-size:.85rem">
+        <span class="note" id="galCount"></span>
+      </div>
+      <div class="gal-preview" id="galPreview"></div>
+      <div class="gal-grid" id="col-gallery"></div>
+    </section>
+  </div>
+
+  <div class="panel" data-panel="data">
+    <section class="card">
+      <h2>💾 Sauvegarde & restauration</h2>
+      <p class="hint">Exportez régulièrement vos données !</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn-sm" id="exportBtn">⬇ Exporter tout (.json)</button>
+        <button class="btn-sm" id="importBtn">⬆ Importer</button>
+        <input type="file" id="importFile" accept=".json,application/json" hidden>
+      </div>
+      <p class="note" style="margin-top:16px">⚠️ Vos modifications sont stockées dans <strong>votre navigateur</strong> et visibles immédiatement ici.
+      Pour éditer le site <strong>en ligne</strong> et que tout le monde voie les changements, utilisez le CMS intégré :
+      <a href="cms/" style="color:var(--gold)">cms/</a> (voir README, section Déploiement Vercel).</p>
+    </section>
+    <section class="card">
+      <button class="btn-sm" id="resetBtn" style="color:var(--accent)">🗑 Tout réinitialiser (valeurs des fichiers data/)</button>
+    </section>
+  </div>
+</div>
+
+<div class="save-bar">
+    <a href="portfolio.html#galerie" target="_blank" style="color:#d4af37;font-size:.85rem;text-decoration:none;border:1px solid rgba(212,175,55,.4);padding:10px 16px;border-radius:8px">👁 Voir la galerie</a>
+    <button class="btn-gold" id="saveBtn">💾 Enregistrer</button>
+  </div>
+<div id="toast"></div>
+
+<script src="js/site-data.js"></script>
+<script>
+(function(){
+  if(window.__adminAuthed !== true) return;   // page verrouillée
+
+  var $ = function(s){ return document.querySelector(s); };
+  var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+  var CATS = [['film','Film'],['clip','Clip'],['doc','Documentaire'],['pub','Publicité'],['event','Événement']];
+
+  /* Déconnexion */
+  $('#logoutBtn').addEventListener('click',function(){
+    sessionStorage.removeItem('oscart_admin_ok');
+    location.href = 'index.html';
+  });
+
+  window.OscartData.ready.then(function(){
+    var B = window.OscartData.data();   // bundle courant { site, portfolio, team, services }
+
+    /* ---------- Onglets ---------- */
+    var tabs = [['site','⚙️ Réglages'],['portfolio','🎬 Portfolio'],['team','👥 Équipe'],['services','🛠 Services'],['galerie','📸 Galerie'],['data','💾 Données']];
+    $('#tabs').innerHTML = tabs.map(function(t,i){
+      return '<button class="tab'+(i===0?' active':'')+'" data-tab="'+t[0]+'">'+t[1]+'</button>';
+    }).join('');
+    $('#tabs').addEventListener('click',function(e){
+      var b = e.target.closest('.tab'); if(!b) return;
+      $$('.tab').forEach(function(x){ x.classList.toggle('active', x===b); });
+      $$('.panel').forEach(function(p){ p.classList.toggle('active', p.dataset.panel===b.dataset.tab); });
+    });
+
+    /* ---------- Helpers ---------- */
+    function esc(s){ return String(s==null?'':s).split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('"').join('&quot;'); }
+    function toast(m){ var t=$('#toast'); t.textContent=m; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2500); }
+
+    /* Indicateur « modifications non enregistrées » */
+    var DIRTY = false;
+    function markDirty(){
+      if(DIRTY) return;
+      DIRTY = true;
+      var b = $('#saveBtn');
+      if(b){ b.classList.add('save-dirty'); b.textContent = '💾 Enregistrer — modifications non publiées !'; }
+    }
+    document.addEventListener('input', markDirty, true);
+    function fld(label,val,ph){ return '<label class="field"><span>'+label+'</span><input type="text" value="'+esc(val)+'" placeholder="'+(ph||'')+'"></label>'; }
+    function taFld(label,val,rows){ return '<label class="field"><span>'+label+'</span><textarea rows="'+(rows||3)+'">'+esc(val)+'</textarea></label>'; }
+    function bindInputs(root,obj,path){
+      root.querySelectorAll('label.field > input[type=text], label.field > input[type=url], label.field > select, label.field > textarea').forEach(function(inp){
+        inp.addEventListener('input',function(){ obj[inp.dataset.k] = inp.value; });
+      });
+    }
+
+    /* ---------- Réglages site ---------- */
+    ['phone','email','address'].forEach(function(k){ $('#f-'+k).value = B.site.contact[k]||''; $('#f-'+k).addEventListener('input',function(){ B.site.contact[k]=this.value; }); });
+    Object.keys(B.site.social).forEach(function(k){
+      var el = $('#s-'+k); if(!el) return;
+      el.value = B.site.social[k]||'';
+      el.addEventListener('input',function(){ B.site.social[k]=this.value; });
+    });
+    $('#f-showreel').value = B.site.showreel||'';
+    $('#f-showreel').addEventListener('input',function(){ B.site.showreel=this.value; });
+    if(!B.site.stats || !B.site.stats.length){ B.site.stats=[{v:'',l:''},{v:'',l:''},{v:'',l:''},{v:'',l:''}]; }
+    var sWrap=$('#statsRows');
+    B.site.stats.forEach(function(st,i){
+      var row=document.createElement('div');
+      row.className='stat-row';
+      row.innerHTML='<label class="field"><span>Chiffre '+(i+1)+'</span><input type="text" value="'+esc(st.v)+'" placeholder="120+"></label>'+
+                    '<label class="field"><span>Libellé '+(i+1)+'</span><input type="text" value="'+esc(st.l)+'"></label>';
+      var ins=row.querySelectorAll('input');
+      ins[0].addEventListener('input',function(){ st.v=this.value; });
+      ins[1].addEventListener('input',function(){ st.l=this.value; });
+      sWrap.appendChild(row);
+    });
+    function refreshPrev(){
+      var lg=B.site.media&&B.site.media.logo, hr=B.site.media&&B.site.media.hero;
+      $('#prev-logo').src=lg||'images/logo.png';
+      var hp=$('#prev-hero'); hp.style.display=hr?'block':'none'; if(hr)hp.src=hr;
+    }
+    refreshPrev();
+
+    /* ---------- Upload images ---------- */
+    var upTarget=null;
+    document.addEventListener('click',function(e){
+      var b=e.target.closest('[data-up]');
+      if(b){ upTarget=b.getAttribute('data-up'); $('#fileUp').click(); }
+    });
+    $('#fileUp').addEventListener('change',function(){
+      var f=this.files[0]; this.value='';
+      if(!f||!upTarget) return;
+      if(f.size>800000 && !confirm('Image de '+Math.round(f.size/1024)+' Ko — volumineux pour le stockage navigateur. Continuer ?')) return;
+      var r=new FileReader();
+      r.onload=function(){
+        var parts=upTarget.split('.');
+        var obj=B; while(parts.length>1){ obj=obj[parts.shift()]; }
+        obj[parts[0]]=r.result;
+        refreshPrev(); toast('Image chargée — pensez à Enregistrer.');
+      };
+      r.readAsDataURL(f);
+    });
+
+    /* ---------- Compression image (protège le quota localStorage ~5 Mo) ---------- */
+    function compressImage(file, cb){
+      if(!/^image\//.test(file.type) || /gif|svg/.test(file.type)){
+        var r0=new FileReader(); r0.onload=function(){cb(r0.result);}; r0.readAsDataURL(file); return;
+      }
+      var img=new Image(), url=URL.createObjectURL(file);
+      img.onload=function(){
+        URL.revokeObjectURL(url);
+        var MAX=1600, w=img.naturalWidth, h=img.naturalHeight;
+        var sc=Math.min(1, MAX/Math.max(w,h));
+        w=Math.max(1,Math.round(w*sc)); h=Math.max(1,Math.round(h*sc));
+        var c=document.createElement('canvas'); c.width=w; c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        try{ cb(c.toDataURL('image/jpeg',0.82)); }
+        catch(e){ var r1=new FileReader(); r1.onload=function(){cb(r1.result);}; r1.readAsDataURL(file); }
+      };
+      img.onerror=function(){ URL.revokeObjectURL(url); var r2=new FileReader(); r2.onload=function(){cb(r2.result);}; r2.readAsDataURL(file); };
+      img.src=url;
+    }
+
+    /* ---------- Collections ---------- */
+    var FIELDS = {
+      portfolio: [
+        {k:'title',   lab:'Titre *'},
+        {k:'category',lab:'Catégorie', sel:CATS},
+        {k:'subtitle',lab:'Sous-titre (ex. Clip musical — Artiste)'},
+        {k:'tags',    lab:'Tags (ex. Clip · Musique · 3 min)'},
+        {k:'video',   lab:'URL vidéo (YouTube/Vimeo)', wide:true},
+        {k:'thumb',   lab:'Image de vignette', wide:true},
+        {k:'client',  lab:'Client'},
+        {k:'year',    lab:'Année'},
+        {k:'desc',    lab:'Description (lightbox)', ta:true, rows:3, wide:true}
+      ],
+      team: [
+        {k:'name', lab:'Nom *'},
+        {k:'role', lab:'Rôle'},
+        {k:'bio',  lab:'Bio courte', ta:true, wide:true},
+        {k:'photo',lab:'Photo (URL ou téléversée)', wide:true}
+      ],
+      services: [
+        {k:'title', lab:'Titre *'},
+        {k:'icon',  lab:'Icône (emoji)'},
+        {k:'tag',   lab:'Étiquette (ex. 01 · Cinéma)'},
+        {k:'id',    lab:'Identifiant ancre (ex. films)'},
+        {k:'text',  lab:'Texte accueil (court)', ta:true, wide:true},
+        {k:'detail',lab:'Texte détaillé (page Services)', ta:true, rows:4, wide:true},
+        {k:'items', lab:'Points forts (une ligne par point)', ta:true, rows:4, wide:true}
+      ]
+    };
+
+    function itemCard(col,item,idx,total){
+      var html='<div class="item-card" data-idx="'+idx+'">'+
+        '<div class="item-head"><strong>'+(FIELDS[col][0].k==='title'?esc(item.title)||'Sans titre':'#'+(idx+1))+
+        '</strong><button class="del-btn" data-del="'+col+'" data-i="'+idx+'">✕ Supprimer</button></div><div class="grid-2">';
+      FIELDS[col].forEach(function(f){
+        var v=item[f.k]||(f.ta?'':'');
+        var inner;
+        if(f.sel){
+          inner='<label class="field"><span>'+f.lab+'</span><select data-k="'+f.k+'">'+f.sel.map(function(o){
+            return '<option value="'+o[0]+'"'+(item[f.k]===o[0]?' selected':'')+'>'+o[1]+'</option>';
+          }).join('')+'</select></label>';
+        } else if(f.ta){
+          inner='<label class="field" style="grid-column:1/-1"><span>'+f.lab+'</span><textarea rows="'+(f.rows||3)+'" data-k="'+f.k+'">'+esc(v)+'</textarea></label>';
+        } else {
+          inner='<label class="field"><span>'+f.lab+'</span><input type="text" data-k="'+f.k+'" value="'+esc(v)+'"></label>';
+        }
+        html+=inner;
+      });
+      if(col==='portfolio'||col==='team'){
+        html+='<div class="img-row" style="grid-column:1/-1"><img src="'+esc(item[col==='portfolio'?'thumb':'photo'])+'" alt="" onerror="this.style.visibility=\'hidden\'">'+
+              '<button class="btn-sm" data-itemup="'+col+'" data-i="'+idx+'">📤 Téléverser '+ (col==='portfolio'?'la vignette':'la photo') +'</button>'+
+              '<span class="note">'+(item[col==='portfolio'?'thumb':'photo']?esc(String(item[col==='portfolio'?'thumb':'photo']).slice(0,40)):'Aucune image')+'</span></div>';
+      }
+      return html+'</div></div>';
+    }
+
+    function renderCol(col){
+      var wrap=$('#col-'+col);
+      wrap.innerHTML=B[col].map(function(it,i){ return itemCard(col,it,i,B[col].length); }).join('');
+      wrap.addEventListener('input',function(e){
+        var card=e.target.closest('.item-card'); if(!card) return;
+        var k=e.target.dataset.k; if(!k) return;
+        var idx=+card.dataset.idx;
+        B[col][idx][k]=e.target.value;
+        if(k==='title'){ var strong=card.querySelector('.item-head strong'); if(strong) strong.textContent=e.target.value||'Sans titre'; }
+      });
+    }
+    renderCol('portfolio'); renderCol('team'); renderCol('services');
+
+    /* Ajout / suppression */
+    document.addEventListener('click',function(e){
+      var addB=e.target.closest('[data-add]');
+      if(addB){
+        var col=addB.getAttribute('data-add');
+        var blank = col==='services'
+          ? {id:'',icon:'🎥',tag:'',title:'Nouveau service',text:'',detail:'',items:['']}
+          : col==='team'
+          ? {name:'Nouveau membre',role:'',bio:'',photo:''}
+          : {title:'Nouveau projet',category:'film',subtitle:'',tags:'',thumb:'',video:'',client:'',year:'',desc:''};
+        B[col].push(blank);
+        renderColRefresh(col);
+      }
+      var delB=e.target.closest('[data-del]');
+      if(delB){
+        var c=delB.getAttribute('data-del'), i=+delB.getAttribute('data-i');
+        if(confirm('Supprimer cet élément ?')){ B[c].splice(i,1); renderColRefresh(c); }
+      }
+    });
+    function renderColRefresh(col){ var w=$('#col-'+col); w.removeEventListener('input',w._h||function(){}); w.innerHTML=''; renderCol(col); }
+
+    /* Upload vignette / photo d'un élément */
+    var itemUp=null;
+    document.addEventListener('click',function(e){
+      var b=e.target.closest('[data-itemup]');
+      if(b){ itemUp={col:b.getAttribute('data-itemup'), i:+b.getAttribute('data-i')}; $('#fileUp').click(); }
+    });
+    var origHandler=$('#fileUp').onchange;
+    $('#fileUp').addEventListener('change',function(ev){
+      if(!itemUp) return;
+      var f=ev.target.files[0]; ev.target.value=''; 
+      if(!f) { itemUp=null; return; }
+      var col=itemUp.col, i=itemUp.i; itemUp=null;
+      compressImage(f,function(dataURL){
+        B[col][i][col==='portfolio'?'thumb':'photo']=dataURL;
+        renderColRefresh(col); toast('Image chargée — pensez à Enregistrer.');
+      });
+    },true);
+
+    /* ---------- Galerie photo ---------- */
+    if(!Array.isArray(B.gallery)) B.gallery = [];
+    function galRender(){
+      B.gallery = B.gallery.map(function(g){ return typeof g === 'string' ? {src:g,title:'',album:''} : g; });
+      var q = ($('#galSearch').value || '').trim().toLowerCase();
+      $('#col-gallery').innerHTML = B.gallery.map(function(g,i){
+        return {g:g,i:i};
+      }).filter(function(o){
+        return !q || (o.g.title||'').toLowerCase().indexOf(q) > -1 || (o.g.album||'').toLowerCase().indexOf(q) > -1;
+      }).map(function(o){
+        var g=o.g;
+        return '<div class="gal-cell" data-i="'+o.i+'">' +
+          '<img loading="lazy" src="'+esc(encodeURI(g.src))+'" alt="">' +
+          '<input type="text" placeholder="Titre" value="'+esc(g.title||'')+'" data-gf="title">' +
+          '<input type="text" placeholder="Album" value="'+esc(g.album||'')+'" data-gf="album">' +
+          '<div class="gal-actions">' +
+            '<button class="btn-sm" data-gmove="-1" title="Reculer">←</button>' +
+            '<button class="btn-sm" data-gmove="1" title="Avancer">→</button>' +
+            '<button class="btn-sm" data-gcover="'+o.i+'" title="En faire la couverture de l\'album">⭐</button>' +
+            '<button class="btn-sm del-btn" data-gdel="'+o.i+'" title="Supprimer">✕</button>' +
+          '</div></div>';
+      }).join('');
+      updateGalMeta();
+    }
+
+    /* Compteur + aperçu EN DIRECT — ne reconstruit PAS la grille (focus préservé) */
+    function updateGalMeta(){
+      var q = ($('#galSearch').value || '').trim().toLowerCase();
+      var shown = B.gallery.filter(function(g){
+        return !q || (g.title||'').toLowerCase().indexOf(q) > -1 || (g.album||'').toLowerCase().indexOf(q) > -1;
+      }).length;
+      var albums = {};
+      B.gallery.forEach(function(g){ var k = (g.album||'').trim(); if(k) albums[k] = (albums[k]||0)+1; });
+      var nAl = Object.keys(albums).length;
+      $('#galCount').textContent = B.gallery.length + ' photo(s)' +
+        (nAl ? ' · ' + nAl + ' album(s) · ' + shown + ' affichée(s)' : '');
+      var pv = $('#galPreview');
+      if(pv){
+        pv.innerHTML = nAl
+          ? '<span class="gp-label">Cartes qui apparaîtront sur le site après 💾 Enregistrer :</span>' +
+            Object.keys(albums).map(function(n){
+              return '<span class="gp-chip">📁 ' + esc(n) + ' <b>' + albums[n] + '</b></span>';
+            }).join('') +
+            '<span class="gp-chip gp-single">📷 seules <b>' + B.gallery.reduce(function(s,g){ return s + ((g.album||'').trim() ? 0 : 1); }, 0) + '</b></span>'
+          : '<span class="gp-label">Aucun album — donnez le même nom d\'album à plusieurs photos pour créer une carte.</span>';
+      }
+    }
+    galRender();
+    $('#galSearch').addEventListener('input', galRender);
+
+    $('#col-gallery').addEventListener('input',function(e){
+      var cell = e.target.closest('.gal-cell'); if(!cell) return;
+      var f = e.target.getAttribute('data-gf'); if(!f) return;
+      var g = B.gallery[+cell.dataset.i]; if(!g) return;
+      g[f] = (f === 'album') ? e.target.value.replace(/\s+/g,' ').trim() : e.target.value;
+      updateGalMeta(); /* aperçu albums en direct, sans perdre le focus */
+      markDirty();
+    });
+    document.addEventListener('click',function(e){
+      var mv = e.target.closest('[data-gmove]');
+      if(mv){
+        var cell = mv.closest('.gal-cell');
+        var i = +cell.dataset.i, j = i + (+mv.getAttribute('data-gmove'));
+        if(j < 0 || j >= B.gallery.length) return;
+        var t = B.gallery[i]; B.gallery[i] = B.gallery[j]; B.gallery[j] = t;
+        galRender();
+        return;
+      }
+      var del = e.target.closest('[data-gdel]');
+      if(del && confirm('Supprimer cette photo de la galerie ?')){
+        B.gallery.splice(+del.getAttribute('data-gdel'), 1);
+        galRender();
+        return;
+      }
+      var cov = e.target.closest('[data-gcover]');
+      if(cov){
+        var ci = +cov.getAttribute('data-gcover');
+        var g = B.gallery[ci];
+        if(!g) return;
+        var target = 0;
+        if(g.album){
+          for(var k=0;k<B.gallery.length;k++){
+            if(k!==ci && (B.gallery[k].album||'') === g.album){ target = k; break; }
+          }
+        }
+        B.gallery.splice(ci,1);
+        B.gallery.splice(target,0,g);
+        galRender();
+        toast('⭐ Cette photo est maintenant la couverture de son album.');
+      }
+    });
+    $('#galAddBtn').addEventListener('click',function(){ $('#galFiles').click(); });
+    $('#galFiles').addEventListener('change',function(){
+      var files = Array.prototype.slice.call(this.files); this.value = '';
+      if(!files.length) return;
+      var done = 0;
+      files.forEach(function(f){
+        compressImage(f, function(dataURL){
+          B.gallery.push({ src:dataURL, title:'', album:'' });
+          if(++done === files.length) galRender();
+        });
+      });
+    });
+
+    /* ---------- Sauvegarde / données ---------- */
+    $('#saveBtn').addEventListener('click',function(){
+      try{
+        window.OscartData.save(B);
+        toast('✅ Enregistré ! Rechargement...');
+      }catch(err){
+        if(err && /quota/i.test((err.name||'')+(err.message||''))){
+          alert("Stockage navigateur plein (limite ~5 Mo) !\n\n1. Cliquez Exporter pour sauvegarder vos données\n2. Cliquez Réinitialiser\n3. Réimportez puis réduisez le poids des images téléversées");
+        } else {
+          alert("Erreur : "+err.message);
+        }
+      }
+    });
+    $('#exportBtn').addEventListener('click',function(){
+      var blob=new Blob([JSON.stringify(B,null,2)],{type:'application/json'});
+      var a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download='oscart-donnees.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+    $('#importBtn').addEventListener('click',function(){ $('#importFile').click(); });
+    $('#importFile').addEventListener('change',function(){
+      var f=this.files[0]; this.value=''; if(!f) return;
+      var r=new FileReader();
+      r.onload=function(){
+        try{
+          var j=JSON.parse(r.result);
+          if(!j.site) throw new Error('structure inattendue');
+          window.OscartData.save(j);
+        }catch(err){ alert('Fichier invalide : '+err.message); }
+      };
+      r.readAsText(f);
+    });
+    $('#resetBtn').addEventListener('click',function(){
+      if(confirm('Effacer TOUTES les modifications locales ? Les fichiers data/ d\'origine seront réaffichés.')){
+        window.OscartData.reset();
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "films",
+    "icon": "🎬",
+    "tag": "01 · Cinéma",
+    "title": "Films & Courts-métrages",
+    "text": "De l'écriture à la post-production, nous racontons votre histoire avec une direction artistique soignée.",
+    "detail": "De l'écriture scénaristique à la sortie en festival, nous pilotons l'intégralité de la production : casting, repérages, tournage, montage, étalonnage et livraison DCP. Nous accompagnons aussi les productions étrangères en service production sur notre territoire.",
+    "items": ["Scénario & direction artistique", "Casting, repérages, production exécutive", "Tournage cinéma (4K / 6K / RAW)", "Étalonnage & livraison DCP"]
+  },
+  {
+    "id": "clips",
+    "icon": "🎤",
+    "tag": "02 · Musique",
+    "title": "Clips musicaux",
+    "text": "Mise en scène, chorégraphie, étalonnage : un clip qui marque les esprits et sort l'artiste du lot.",
+    "detail": "Un clip doit raconter en 3 minutes. Nous concevons chaque plan comme un tableau, du découpage à la colorimétrie, pour donner une vraie identité visuelle à l'artiste.",
+    "items": ["Traitement visuel & moodboard", "Découpage chorégraphique", "Steadicam, drones, grue", "VFX & étalonnage cinématique"]
+  },
+  {
+    "id": "doc",
+    "icon": "📽️",
+    "tag": "03 · Documentaire",
+    "title": "Documentaires",
+    "text": "Investigation, portrait, voyage : nous menons vos projets documentaires avec rigueur et sensibilité.",
+    "detail": "Investigation, portrait, voyage, société : nous menons vos projets documentaires avec une vraie ligne éditoriale et un respect du réel.",
+    "items": ["Recherche, développement, écritures", "Tournages longs formats", "Sound design & voix off", "Livraison TV, festival, plateforme"]
+  },
+  {
+    "id": "pub",
+    "icon": "📺",
+    "tag": "04 · Marque",
+    "title": "Publicité & Brand content",
+    "text": "Spots TV, contenus social media, films corporate : votre marque sublimée en images.",
+    "detail": "Spots TV, films corporate, contenus pour réseaux sociaux : nous traduisons l'ADN de votre marque en images fortes, avec un workflow publicitaire maîtrisé.",
+    "items": ["Concepts créatifs & storyboard", "Production agence / directe marque", "Formats TV, web, social (16:9, 9:16, 1:1)", "Livraison multi-formats & langues"]
+  },
+  {
+    "id": "event",
+    "icon": "🎉",
+    "tag": "05 · Événementiel",
+    "title": "Événementiel & Live",
+    "text": "Mariages, concerts, conférences : captation multi-caméras et diffusion en direct.",
+    "detail": "Mariages, séminaires, concerts, lancements produits : captation multi-caméras, régie mobile, diffusion en direct et montage rapide pour les réseaux.",
+    "items": ["Multi-caméras jusqu'à 6 sources", "Régie mobile HD / 4K en direct", "Drone & travelling", "After-movie sous 24-72h"]
+  },
+  {
+    "id": "post",
+    "icon": "🎛️",
+    "tag": "06 · Studio",
+    "title": "Post-production",
+    "text": "Montage, étalonnage, VFX, sound design : un studio complet pour sublimer vos rushes.",
+    "detail": "Le studio OSC'ART Production prend en charge vos rushes : montage, étalonnage, VFX, mastering audio. Nous travaillons sur DaVinci Resolve, Premiere Pro et After Effects.",
+    "items": ["Montage offline & online", "Étalonnage HDR / SDR", "VFX & compositing", "Sound design, mixage 5.1, dubbing"]
+  }
+]
