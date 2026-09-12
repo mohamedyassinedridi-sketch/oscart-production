@@ -128,6 +128,14 @@
     document.querySelectorAll('.socials a').forEach(function(a){
       if(PLACEHOLDER.test(a.getAttribute('href') || '')) a.style.display = 'none';
     });
+    document.querySelectorAll('a[href]').forEach(function(a){
+      if(!PLACEHOLDER.test(a.getAttribute('href') || '')) return;
+      a.removeAttribute('href');
+      a.setAttribute('aria-disabled', 'true');
+      a.style.pointerEvents = 'none';
+      a.style.opacity = '.45';
+      a.title = 'À compléter';
+    });
     document.querySelectorAll('.newsletter-mini').forEach(function(el){
       if(PLACEHOLDER.test(el.textContent)) el.style.display = 'none';
     });
