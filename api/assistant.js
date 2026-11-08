@@ -181,27 +181,37 @@ async function streamGemini(system, messages, send) {
   const extra = (process.env.GEMINI_FALLBACK_MODELS || 'gemini-3.6-flash').split(',').map((x) => x.trim()).filter(Boolean);
   let order = [geminiWorking, GEMINI_MODEL].concat(extra).filter((m, i, a) => m && a.indexOf(m) === i);
   let lastErr = null, discovered = false;
+  const started = Date.now();
   for (let i = 0; i < order.length && i < 5; i++) {
+    if (Date.now() - started > 40000) break; // garder de la marge sous la limite de 60 s de Vercel
     const model = order[i];
     let wrote = false;
+    // Délai par tentative : si le modèle ne répond pas (ou s'arrête) pendant 12 s, on passe au suivant
+    const ctrl = new AbortController();
+    let timer = setTimeout(() => ctrl.abort(), 12000);
+    const kick = () => { clearTimeout(timer); timer = setTimeout(() => ctrl.abort(), 15000); };
     try {
       const response = await ai.models.generateContentStream({
         model,
         contents,
-        config: { systemInstruction: system, maxOutputTokens: 4000 },
+        config: { systemInstruction: system, maxOutputTokens: 4000, abortSignal: ctrl.signal },
       });
       for await (const chunk of response) {
+        kick();
         if (chunk.text) { wrote = true; send({ t: chunk.text }); }
       }
+      clearTimeout(timer);
       if (wrote) { geminiWorking = model; return 'gemini:' + model; }
       lastErr = new Error('réponse vide');
     } catch (err) {
+      clearTimeout(timer);
       lastErr = err;
       if (wrote) throw err; // réponse déjà commencée : on ne recommence pas avec un autre modèle
-      const st = Number(err && (err.status || err.code)) || 0;
+      const aborted = ctrl.signal.aborted;
+      const st = aborted ? 504 : (Number(err && (err.status || err.code)) || 0);
       console.error('[assistant] gemini ' + model + ' :', st, String(err && err.message).slice(0, 160));
       // Surcharge, quota ou modèle inconnu : on tente un autre modèle Gemini
-      if (st && [404, 429, 500, 503].indexOf(st) < 0) throw err;
+      if (st && [404, 429, 500, 503, 504].indexOf(st) < 0) throw err;
       if (model === geminiWorking) geminiWorking = '';
     }
     if (i === order.length - 1 && !discovered) {
