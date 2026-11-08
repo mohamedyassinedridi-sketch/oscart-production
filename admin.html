@@ -80,8 +80,10 @@
 </div>
 
 <script>
-/* Authentification admin — le mot de passe n'est jamais stocké en clair :
-   seule son empreinte SHA-256 est conservée ici. */
+/* Écran de verrouillage LOCAL uniquement — ce n'est PAS une sécurité :
+   tout se passe dans le navigateur et les modifications restent dans ce
+   navigateur. En production, /admin.html est redirigé vers /cms/
+   (voir vercel.json) : l'édition en ligne passe par Decap CMS + GitHub. */
 (function(){
   var HASH = 'e5cd672f308f431ddab36ec122a0c143e7cf749aff4d0e8fc086b0b608a2a75f';
   var FLAG = 'oscart_admin_ok';

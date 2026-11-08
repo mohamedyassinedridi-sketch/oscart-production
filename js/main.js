@@ -197,17 +197,44 @@
       e.preventDefault();
       const action = form.getAttribute('action')||'';
       const data = new FormData(form);
-      if(action.startsWith('https://formspree.io/f/') && !action.endsWith('ÀREMPLACER')){
+      if(/^https:\/\/formspree\.io\/f\/[A-Za-z0-9]+$/.test(action)){
         try{
           const res = await fetch(action,{method:'POST',body:data,headers:{Accept:'application/json'}});
           if(res.ok){
             form.innerHTML = '<div style="text-align:center;padding:40px"><h3 style="color:#fff">✅ Merci !</h3><p>Votre brief a bien été envoyé. Nous revenons vers vous sous 24h.</p></div>';
-          } else throw new Error();
-        }catch{fallbackMailto(form,data);}
-      } else {fallbackMailto(form,data);}
+            return;
+          }
+        }catch(err){}
+      }
+      fallbackMailto(form,data);
     });
   }
-  function fallbackMailto(form,data){
+  /* Email de réception : celui du CMS (data/site.json → contact.email) */
+  async function contactEmail(){
+    try{
+      if(window.OscartData){ await window.OscartData.ready; }
+      const e = window.OscartData && window.OscartData.data().site.contact.email;
+      if(e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return e.trim();
+    }catch(err){}
+    return '';
+  }
+  function formError(form,msg){
+    let box = form.querySelector('.form-error');
+    if(!box){
+      box = document.createElement('p');
+      box.className = 'form-error';
+      box.setAttribute('role','alert');
+      box.style.cssText = 'color:#ff8a8a;margin-top:14px;font-size:.9rem';
+      form.appendChild(box);
+    }
+    box.textContent = msg;
+  }
+  async function fallbackMailto(form,data){
+    const to = await contactEmail();
+    if(!to){
+      formError(form,"Le formulaire n'est pas encore actif. Merci de réessayer prochainement.");
+      return;
+    }
     const subject = encodeURIComponent('Brief OSC\'ART Production — '+(data.get('type')||'Projet'));
     const body = encodeURIComponent(
       'Nom: '+(data.get('name')||'')+'\n'+
@@ -219,7 +246,6 @@
       'Livraison: '+(data.get('deadline')||'')+'\n\n'+
       'Message:\n'+(data.get('message')||'')
     );
-    const mail = (form.action && form.action.includes('@')) ? form.action.replace('https://formspree.io/f/','mailto:').replace('mailto:mailto:','mailto:') : 'mailto:contact@oscarproduction.fr';
-    window.location.href = 'mailto:?subject='+subject+'&body='+body;
+    window.location.href = 'mailto:'+to+'?subject='+subject+'&body='+body;
   }
 })();

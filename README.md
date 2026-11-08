@@ -92,8 +92,8 @@ Tous les `[À REMPLACER]` doivent être remplacés par vos vraies données :
 | OVH / hébergeur classique | ZIP + upload FTP du contenu dans `/www/` |
 | GitHub Pages | Push + Settings → Pages → branche `main` |
 
-> ℹ️ Le panneau local `admin.html` fonctionne partout, mais ses modifications ne
-> vivent que dans votre navigateur. Pour un site administrable en ligne par
+> ℹ️ Le panneau `admin.html` ne sert qu'en local : ses modifications ne vivent
+> que dans votre navigateur, et sur Vercel `/admin.html` redirige vers `/cms/`. Pour un site administrable en ligne par
 > plusieurs personnes : utilisez le **CMS (`/cms/`)**.
 
 ## 🎨 Personnalisation rapide

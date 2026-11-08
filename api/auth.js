@@ -1,5 +1,7 @@
 /* OSC'ART Production — Pont OAuth GitHub pour Decap CMS (Vercel Function)
    Variables requises sur Vercel : GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET */
+const crypto = require('crypto');
+
 module.exports = function handler(req, res) {
   const clientId = process.env.GITHUB_CLIENT_ID;
   if (!clientId) {
@@ -10,9 +12,10 @@ module.exports = function handler(req, res) {
   const host = req.headers['x-forwarded-host'] || req.headers.host;
   const redirectUri = proto + '://' + host + '/api/callback';
 
-  const state = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+  /* State imprévisible (anti-CSRF) */
+  const state = crypto.randomBytes(24).toString('hex');
   res.setHeader('Set-Cookie',
-    'oscart_oauth_state=' + state + '; Path=/; HttpOnly; SameSite=Lax; Max-Age=600');
+    'oscart_oauth_state=' + state + '; Path=/api; HttpOnly; Secure; SameSite=Lax; Max-Age=600');
 
   const url = new URL('https://github.com/login/oauth/authorize');
   url.searchParams.set('client_id', clientId);

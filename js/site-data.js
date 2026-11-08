@@ -128,8 +128,20 @@
     document.querySelectorAll('.socials a').forEach(function(a){
       if(PLACEHOLDER.test(a.getAttribute('href') || '')) a.style.display = 'none';
     });
+    /* Chiffres d'accueil non renseignés : on masque la case (et le bloc si tout est vide) */
+    document.querySelectorAll('.hero-stats').forEach(function(box){
+      var shown = 0;
+      box.querySelectorAll(':scope > div').forEach(function(div){
+        var st = div.querySelector('strong');
+        if(st && PLACEHOLDER.test(st.textContent)) div.style.display = 'none';
+        else shown++;
+      });
+      if(!shown) box.style.display = 'none';
+    });
     document.querySelectorAll('a[href]').forEach(function(a){
       if(!PLACEHOLDER.test(a.getAttribute('href') || '')) return;
+      /* Bouton dont le libellé lui-même est un modèle : on le retire */
+      if(PLACEHOLDER.test(a.textContent)){ a.style.display = 'none'; return; }
       a.removeAttribute('href');
       a.setAttribute('aria-disabled', 'true');
       a.style.pointerEvents = 'none';
@@ -230,6 +242,16 @@
             toggleFs(vid);
           });
         }
+        /* Fichier absent (ex. vidéo locale non déployée) : on remet l'encart */
+        vid.addEventListener('error', function(){
+          vid.remove();
+          var b = vwrap.querySelector('.fs-btn'); if(b) b.remove();
+          vwrap.classList.remove('portrait');
+          if(sph){
+            sph.style.display = '';
+            var p = sph.querySelector('p'); if(p) p.textContent = 'Showreel bientôt disponible';
+          }
+        });
         vid.src = encodeURI(S.showreel);
       } else {
         var fr = vwrap.querySelector('iframe');
