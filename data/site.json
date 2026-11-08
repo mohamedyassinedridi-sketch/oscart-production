@@ -1,12 +1,37 @@
 {
-  "contact": { "address": "", "phone": "", "email": "" },
-  "social": { "instagram": "", "youtube": "", "vimeo": "", "linkedin": "", "tiktok": "" },
+  "contact": {
+    "address": "",
+    "phone": "",
+    "email": ""
+  },
+  "social": {
+    "instagram": "",
+    "youtube": "",
+    "vimeo": "",
+    "linkedin": "",
+    "tiktok": ""
+  },
   "stats": [
-    { "v": "", "l": "projets réalisés" },
-    { "v": "", "l": "clients satisfaits" },
-    { "v": "", "l": "prix & sélections" },
-    { "v": "", "l": "années d'expérience" }
+    {
+      "v": "",
+      "l": "projets réalisés"
+    },
+    {
+      "v": "",
+      "l": "clients satisfaits"
+    },
+    {
+      "v": "",
+      "l": "prix & sélections"
+    },
+    {
+      "v": "",
+      "l": "années d'expérience"
+    }
   ],
   "showreel": "portfolio/videos/osc'art production.MP4",
-  "media": { "logo": "images/logo.png", "hero": "images/gallery/a7401895.jpg" }
+  "media": {
+    "logo": "images/logo-mark.png",
+    "hero": "images/gallery/a7401895.jpg"
+  }
 }

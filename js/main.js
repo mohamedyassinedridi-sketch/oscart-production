@@ -105,8 +105,13 @@
         /* Vidéo absente en ligne (fichiers lourds non déployés) */
         const note = lb.querySelector('.lb-note');
         v.addEventListener('error',()=>{
-          v.classList.remove('on');
-          if(note) note.hidden = false;
+          if(!v.getAttribute('src')) return; /* fermeture de la lightbox, pas une vraie erreur */
+          v.classList.remove('on','portrait');
+          /* À la place : l'affiche du projet + mention « bientôt disponible » */
+          if(holder) holder.classList.remove('has-local');
+          const ph = lbPlaceholder();
+          if(ph) ph.style.display = '';
+          if(lbFullBtn) lbFullBtn.hidden = true;
         });
       }
       return v;
@@ -162,13 +167,28 @@
         if(lbFrame) lbFrame.src = 'about:blank';
         if(ph) ph.style.display='';
       }
+      /* Affiche du projet en fond de l'encart (visible si pas de vidéo) */
+      const pv = p.querySelector('video');
+      const poster = pv ? pv.getAttribute('poster') : '';
+      if(ph){
+        ph.style.backgroundImage = poster ? 'linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.55)),url("' + poster + '")' : '';
+        ph.style.backgroundSize = 'cover';
+        ph.style.backgroundPosition = 'center';
+      }
+      if(lbFullBtn) lbFullBtn.hidden = !raw;
+      /* Description : texte du projet, sinon sous-titre + tags (jamais le texte modèle) */
       const desc = lb.querySelector('.lb-desc');
-      if(desc) desc.textContent = p.dataset.desc || desc.textContent;
+      if(desc){
+        const info = [...p.querySelectorAll('.project-info p')].map(x=>x.textContent.trim()).filter(Boolean).join(' — ');
+        desc.textContent = p.dataset.desc || info;
+        desc.hidden = !desc.textContent;
+      }
       const labels = { film:'Film', clip:'Clip', doc:'Documentaire', pub:'Publicité', event:'Événement' };
       const vals = [p.dataset.client || '', p.dataset.year || '', labels[(p.dataset.cat || '').toLowerCase()] || ''];
       lb.querySelectorAll('.lb-meta span').forEach((span,i)=>{
         const t = span.lastChild;
-        if(t && t.nodeType === 3) t.textContent = ' ' + (vals[i] || '—');
+        if(t && t.nodeType === 3) t.textContent = ' ' + (vals[i] || '');
+        span.hidden = !vals[i]; /* champ vide : on n'affiche pas « — » */
       });
       lb.classList.add('open');
       document.body.style.overflow='hidden';

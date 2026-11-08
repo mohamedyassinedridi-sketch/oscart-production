@@ -151,6 +151,55 @@
     document.querySelectorAll('.newsletter-mini').forEach(function(el){
       if(PLACEHOLDER.test(el.textContent)) el.style.display = 'none';
     });
+
+    function visible(el){ return el.style.display !== 'none'; }
+
+    /* Footer : une colonne sans aucun contenu visible ne garde pas son titre seul */
+    document.querySelectorAll('.site-footer .footer-grid > div').forEach(function(col){
+      if(col.classList.contains('footer-brand')) return;
+      var items = col.querySelectorAll('li, .socials a');
+      if(!items.length) return;
+      if(![].some.call(items, visible)) col.style.display = 'none';
+    });
+
+    /* Page Contact : coordonnées non renseignées → on retire la ligne */
+    document.querySelectorAll('.contact-info ul li').forEach(function(li){
+      var br = li.querySelector('br');
+      var rest = br ? li.textContent.slice(li.querySelector('strong').textContent.length).trim() : '';
+      if(rest === '—' || rest === '') li.style.display = 'none';
+    });
+    document.querySelectorAll('.contact-info').forEach(function(box){
+      var ul = box.querySelector('ul');
+      if(ul && ![].some.call(ul.children, visible)){
+        ul.style.display = 'none';
+        var h = box.querySelector('h3');
+        if(h && h.textContent.indexOf('Coordonn') > -1) h.style.display = 'none';
+      }
+      var soc = box.querySelector('.socials');
+      if(soc && ![].some.call(soc.children, visible)){
+        soc.style.display = 'none';
+        var prev = soc.previousElementSibling;
+        if(prev && /^H[1-6]$/.test(prev.tagName)) prev.style.display = 'none';
+      }
+    });
+
+    /* Équipe encore en modèle ([Nom du …]) : section masquée */
+    document.querySelectorAll('section.team').forEach(function(sec){
+      var names = sec.querySelectorAll('.member h3');
+      if(names.length && [].every.call(names, function(h){ return /^\s*\[.*\]\s*$/.test(h.textContent); })){
+        sec.style.display = 'none';
+      }
+    });
+
+    /* Portfolio : filtre sans aucun projet → bouton masqué */
+    var projects = document.querySelectorAll('.portfolio-grid .project');
+    if(projects.length){
+      document.querySelectorAll('.filter[data-filter]').forEach(function(b){
+        var f = b.dataset.filter;
+        if(f === 'all') return;
+        if(!document.querySelector('.portfolio-grid .project[data-cat="' + f + '"]')) b.style.display = 'none';
+      });
+    }
   }
 
   function applySite(){
@@ -269,8 +318,6 @@
       heroBg.style.backgroundSize = 'cover';
       heroBg.style.backgroundPosition = 'center';
     }
-
-    maskPlaceholders();
   }
 
   /* ================= PORTFOLIO ================= */
@@ -435,7 +482,9 @@
         '<div class="service-text"><span class="tag">' + esc(s.tag) + '</span>' +
         '<h2>' + esc(s.title) + '</h2><p>' + esc(s.detail) + '</p>' +
         '<ul class="checklist">' + s.items.map(function(it){ return '<li>' + esc(it) + '</li>'; }).join('') + '</ul></div>' +
-        '<div class="service-visual visual-' + (i + 1) + '"></div></div>';
+        '<div class="service-visual visual-' + ((i % 6) + 1) + (s.image ? ' has-img' : '') + '">' +
+          (s.image ? '<img loading="lazy" src="' + esc(encodeURI(s.image)) + '" alt="' + esc(s.title) + '">' : '') +
+        '</div></div>';
     }).join('');
   }
 
@@ -474,24 +523,56 @@
     albums.forEach(function(a){ if(!a.cover && a.photos[0]) a.cover = a.photos[0].src; });
     if(!albums.length && !singles.length) return;
 
+    /* Miniature 640 px (images/gallery/thumbs/) pour la grille ; la lightbox garde l'original */
+    function thumbOf(src){
+      var m = /^(\/?images\/gallery\/)([^\/]+\.jpe?g)$/i.exec(src || '');
+      return m ? m[1] + 'thumbs/' + m[2] : src;
+    }
     function tileHTML(g, si){
       var cap = g.title ? '<figcaption><strong>' + esc(g.title) + '</strong></figcaption>' : '';
       return '<figure class="photo-item" data-single="' + si + '">' +
-        '<img loading="lazy" src="' + esc(encodeURI(g.src)) + '" alt="' + esc(g.title || "Photo OSC'ART") + '">' +
+        '<img loading="lazy" src="' + esc(encodeURI(thumbOf(g.src))) + '" data-full="' + esc(encodeURI(g.src)) + '" alt="' + esc(g.title || "Photo OSC'ART") + '">' +
         cap + '</figure>';
     }
 
-    grid.innerHTML = '<div class="photo-grid">' +
+    /* Les tuiles vont directement dans #photoGrid (déjà .photo-grid) :
+       pas de grille imbriquée, sinon tout s'entasse dans la 1re colonne */
+    grid.innerHTML =
       albums.map(function(a, ai){
         return '<figure class="photo-item album-card" data-album="' + ai + '" role="button" tabindex="0"' +
           ' aria-label="Ouvrir l\u2019album ' + esc(a.name) + ' \u2014 ' + a.photos.length + ' photos">' +
-          '<img loading="lazy" src="' + esc(encodeURI(a.cover)) + '" alt="' + esc(a.name) + '">' +
+          '<img loading="lazy" src="' + esc(encodeURI(thumbOf(a.cover))) + '" data-full="' + esc(encodeURI(a.cover)) + '" alt="' + esc(a.name) + '">' +
           '<span class="al-count">' + a.photos.length + ' photo' + (a.photos.length > 1 ? 's' : '') + '</span>' +
           '<figcaption><strong>' + esc(a.name) + '</strong><span>Album</span></figcaption>' +
         '</figure>';
       }).join('') +
-      singles.map(tileHTML).join('') +
-    '</div>';
+      singles.map(tileHTML).join('');
+
+    /* Miniature absente (photo ajoutée via le CMS) : repli sur l'original */
+    grid.querySelectorAll('img[data-full]').forEach(function(im){
+      im.addEventListener('error', function(){
+        if(im.getAttribute('src') !== im.dataset.full) im.src = im.dataset.full;
+      }, { once: true });
+    });
+
+    /* Galerie longue : on affiche 24 tuiles puis « Voir plus » */
+    var STEP = 24, tiles = grid.children;
+    if(tiles.length > STEP){
+      for(var t = STEP; t < tiles.length; t++) tiles[t].hidden = true;
+      var more = document.createElement('div');
+      more.className = 'gallery-more';
+      more.innerHTML = '<button type="button" class="btn btn-outline">Voir plus de photos</button>';
+      grid.insertAdjacentElement('afterend', more);
+      more.querySelector('button').addEventListener('click', function(){
+        var shown = 0;
+        for(var k = 0; k < tiles.length && shown < STEP; k++){
+          if(tiles[k].hidden){ tiles[k].hidden = false; shown++; }
+        }
+        var left = 0;
+        for(var j = 0; j < tiles.length; j++) if(tiles[j].hidden) left++;
+        if(!left) more.remove();
+      });
+    }
 
     /* ---------- Lightbox V2 ---------- */
     var overlay = document.createElement('div');
@@ -588,6 +669,8 @@
     try{ renderServicesHome(); }catch(e){}
     try{ renderServicesDetail(); }catch(e){}
     try{ renderGallery(); }catch(e){}
+    /* En dernier : s'applique aussi au contenu rendu dynamiquement */
+    try{ maskPlaceholders(); }catch(e){}
   }
 
   Promise.all([
