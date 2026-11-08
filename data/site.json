@@ -1,37 +1,20 @@
 {
   "contact": {
-    "address": "",
+    "address": "Jedeida, Manouba, Tunisie",
     "phone": "",
-    "email": ""
+    "email": "oscartproduction@gmail.com"
   },
   "social": {
-    "instagram": "",
+    "instagram": "https://www.instagram.com/osc.art_production/",
     "youtube": "",
     "vimeo": "",
     "linkedin": "",
-    "tiktok": ""
+    "tiktok": "https://www.tiktok.com/@oscartproduction"
   },
-  "stats": [
-    {
-      "v": "",
-      "l": "projets réalisés"
-    },
-    {
-      "v": "",
-      "l": "clients satisfaits"
-    },
-    {
-      "v": "",
-      "l": "prix & sélections"
-    },
-    {
-      "v": "",
-      "l": "années d'expérience"
-    }
-  ],
-  "showreel": "portfolio/videos/osc'art production.MP4",
+  "stats": [],
+  "showreel": "",
   "media": {
     "logo": "images/logo-mark.png",
-    "hero": "images/gallery/a7401895.jpg"
+    "hero": "media/hero/hero-16x9.jpg"
   }
 }

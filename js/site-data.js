@@ -10,14 +10,9 @@
       site: {
         contact: { address:'', phone:'', email:'' },
         social:  { instagram:'', youtube:'', vimeo:'', linkedin:'', tiktok:'' },
-        stats: [
-          { v:'', l:'projets realises' },
-          { v:'', l:'clients satisfaits' },
-          { v:'', l:'prix & selections' },
-          { v:'', l:'annees d\'experience' }
-        ],
+        stats: [],
         showreel: '',
-        media: { logo:'images/logo.png', hero:'' }
+        media: { logo:'images/logo-mark.png', hero:'' }
       },
       portfolio: [],
       team: [],
@@ -298,7 +293,7 @@
           vwrap.classList.remove('portrait');
           if(sph){
             sph.style.display = '';
-            var p = sph.querySelector('p'); if(p) p.textContent = 'Showreel bientôt disponible';
+            var p = sph.querySelector('p'); if(p) p.textContent = '';
           }
         });
         vid.src = encodeURI(S.showreel);
@@ -481,7 +476,8 @@
       return '<div class="container service-row' + reverse + '" id="' + esc(s.id) + '">' +
         '<div class="service-text"><span class="tag">' + esc(s.tag) + '</span>' +
         '<h2>' + esc(s.title) + '</h2><p>' + esc(s.detail) + '</p>' +
-        '<ul class="checklist">' + s.items.map(function(it){ return '<li>' + esc(it) + '</li>'; }).join('') + '</ul></div>' +
+        '<ul class="checklist">' + s.items.map(function(it){ return '<li>' + esc(it) + '</li>'; }).join('') + '</ul>' +
+        '<p style="margin-top:30px"><a class="link-arrow" href="contact.html">Demander un devis →</a></p></div>' +
         '<div class="service-visual visual-' + ((i % 6) + 1) + (s.image ? ' has-img' : '') + '">' +
           (s.image ? '<img loading="lazy" src="' + esc(encodeURI(s.image)) + '" alt="' + esc(s.title) + '">' : '') +
         '</div></div>';

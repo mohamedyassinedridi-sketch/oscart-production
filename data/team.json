@@ -1,6 +1,1 @@
-[
-  { "name": "[Nom du fondateur]", "role": "Producteur·rice exécutif·ve", "bio": "[Bio courte du membre fondateur.]", "photo": "" },
-  { "name": "[Nom du réalisateur]", "role": "Réalisateur·rice", "bio": "[Bio courte.]", "photo": "" },
-  { "name": "[Nom du DP]", "role": "Directeur·rice de la photographie", "bio": "[Bio courte.]", "photo": "" },
-  { "name": "[Nom du monteur]", "role": "Chef·fe monteur·euse / Post-prod", "bio": "[Bio courte.]", "photo": "" }
-]
+{ "team": [] }

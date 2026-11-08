@@ -58,7 +58,7 @@ CMS.init({
                 { name: 'linkedin',  label: 'LinkedIn',   widget: 'string', required: false },
                 { name: 'tiktok',    label: 'TikTok',     widget: 'string', required: false }
               ]},
-              { name: 'stats', label: "Statistiques de l'accueil", widget: 'list', fields: [
+              { name: 'stats', label: "Statistiques (non affichées — ne mettre que des chiffres vérifiés)", widget: 'list', required: false, fields: [
                 { name: 'v', label: 'Chiffre',  widget: 'string' },
                 { name: 'l', label: 'Libellé',  widget: 'string' }
               ]},
@@ -82,22 +82,30 @@ CMS.init({
             file: 'data/portfolio.json',
             editor: { preview: false },
             fields: [
-              { name: 'portfolio', label: 'Projets', widget: 'list', fields: [
+              { name: 'portfolio', label: 'Projets (l\'ordre = l\'ordre sur le site)', widget: 'list', summary: '{{fields.title}}', fields: [
                 { name: 'title',    label: 'Titre *',       widget: 'string' },
+                { name: 'slug',     label: 'Identifiant (sans espaces)', widget: 'string', required: false },
                 { name: 'category', label: 'Catégorie',     widget: 'select', options: [
-                  { label: 'Film',         value: 'film'  },
-                  { label: 'Clip',         value: 'clip'  },
-                  { label: 'Documentaire', value: 'doc'   },
-                  { label: 'Publicité',    value: 'pub'   },
-                  { label: 'Événement',    value: 'event' }
+                  { label: 'Publicité & Brand content', value: 'pub' },
+                  { label: 'Clip musical',              value: 'clip' },
+                  { label: 'Événementiel',              value: 'event' },
+                  { label: 'Mode & Beauté',             value: 'fashion' },
+                  { label: 'Sport',                     value: 'sport' },
+                  { label: 'Fiction',                   value: 'film' }
                 ]},
-                { name: 'subtitle', label: 'Sous-titre',    widget: 'string', required: false },
-                { name: 'tags',     label: 'Tags',          widget: 'string', required: false },
-                { name: 'thumb',    label: 'Vignette',      widget: 'image',  required: false },
-                { name: 'video',    label: 'URL vidéo YouTube/Vimeo', widget: 'string', required: false },
-                { name: 'client',   label: 'Client',        widget: 'string', required: false },
-                { name: 'year',     label: 'Année',         widget: 'string', required: false },
-                { name: 'desc',     label: 'Description',   widget: 'text',   required: false }
+                { name: 'client',   label: 'Client / artiste (seulement si vérifié)', widget: 'string', required: false },
+                { name: 'subtitle', label: 'Sous-titre (ex. Spot publicitaire)', widget: 'string', required: false },
+                { name: 'format',   label: 'Format de la vidéo', widget: 'select', default: 'h', options: [
+                  { label: 'Horizontal 16:9', value: 'h' },
+                  { label: 'Vertical 9:16',   value: 'v' }
+                ]},
+                { name: 'poster',   label: 'Affiche (image)', widget: 'image', required: false },
+                { name: 'preview',  label: 'Aperçu muet (mp4 court, ~6 s, < 1 Mo)', widget: 'file', required: false },
+                { name: 'video',    label: 'Vidéo à l\'ouverture : fichier mp4 OU lien YouTube / Vimeo', widget: 'string', required: false },
+                { name: 'excerpt',  label: 'La vidéo est un extrait', widget: 'boolean', default: false, required: false },
+                { name: 'instagram',label: 'Lien du Reel Instagram', widget: 'string', required: false },
+                { name: 'featured', label: 'Projet phare (accueil)', widget: 'boolean', default: false, required: false },
+                { name: 'duration', label: 'Durée (secondes)', widget: 'number', required: false }
               ]}
             ]
           }

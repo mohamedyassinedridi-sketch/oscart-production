@@ -1,92 +1,92 @@
 [
   {
-    "id": "films",
-    "icon": "🎬",
-    "tag": "01 · Cinéma",
-    "title": "Films & Courts-métrages",
-    "text": "De l'écriture à la post-production, nous racontons votre histoire avec une direction artistique soignée.",
-    "detail": "De l'écriture scénaristique à la sortie en festival, nous pilotons l'intégralité de la production : casting, repérages, tournage, montage, étalonnage et livraison DCP. Nous accompagnons aussi les productions étrangères en service production sur notre territoire.",
+    "id": "pub",
+    "icon": "",
+    "tag": "01 — Publicité",
+    "title": "Publicité & Brand content",
+    "text": "Spots, films produit et activations de marque.",
+    "detail": "Du concept au film final : nous écrivons, tournons et finalisons des contenus de marque pensés pour la TV, le web et les réseaux. Films produit, spots, activations et événements de marque.",
+    "image": "media/work/iqos-iluma-steve-aoki/poster.jpg",
     "items": [
-      "Scénario & direction artistique",
-      "Casting, repérages, production exécutive",
-      "Tournage cinéma (4K / 6K / RAW)",
-      "Étalonnage & livraison DCP"
-    ],
-    "image": "images/uploads/posters/teaser-la-roulette.jpg"
+      "Spots & films produit",
+      "Activations et événements de marque",
+      "Direction artistique & stylisme",
+      "Déclinaisons multi-formats"
+    ]
+  },
+  {
+    "id": "social",
+    "icon": "",
+    "tag": "02 — Social media",
+    "title": "Social media content",
+    "text": "Reels et formats verticaux qui arrêtent le scroll.",
+    "detail": "Des contenus courts, rythmés et cohérents avec votre identité, tournés et montés pour Instagram, TikTok et YouTube Shorts. Chaque plan est pensé en vertical dès le tournage.",
+    "image": "media/work/the-w-store/poster.jpg",
+    "items": [
+      "Reels, TikTok & Shorts",
+      "Formats 9:16, 4:5 et 16:9",
+      "Séries de contenus pour marques",
+      "Sous-titrage et motion design"
+    ]
   },
   {
     "id": "clips",
-    "icon": "🎤",
-    "tag": "02 · Musique",
+    "icon": "",
+    "tag": "03 — Musique",
     "title": "Clips musicaux",
-    "text": "Mise en scène, chorégraphie, étalonnage : un clip qui marque les esprits et sort l'artiste du lot.",
-    "detail": "Un clip doit raconter en 3 minutes. Nous concevons chaque plan comme un tableau, du découpage à la colorimétrie, pour donner une vraie identité visuelle à l'artiste.",
+    "text": "Clips, live sessions et contenus d'artistes.",
+    "detail": "Clips, live sessions et contenus promotionnels pour artistes et groupes : mise en scène, lumière, maquillage et SFX, montage rythmé et étalonnage soigné.",
+    "image": "media/work/yfz-band-live/poster.jpg",
     "items": [
-      "Traitement visuel & moodboard",
-      "Découpage chorégraphique",
-      "Steadicam, drones, grue",
-      "VFX & étalonnage cinématique"
-    ],
-    "image": "images/uploads/posters/valakan-band-maha-mhamdi.jpg"
-  },
-  {
-    "id": "doc",
-    "icon": "📽️",
-    "tag": "03 · Documentaire",
-    "title": "Documentaires",
-    "text": "Investigation, portrait, voyage : nous menons vos projets documentaires avec rigueur et sensibilité.",
-    "detail": "Investigation, portrait, voyage, société : nous menons vos projets documentaires avec une vraie ligne éditoriale et un respect du réel.",
-    "items": [
-      "Recherche, développement, écritures",
-      "Tournages longs formats",
-      "Sound design & voix off",
-      "Livraison TV, festival, plateforme"
-    ],
-    "image": "images/gallery/dsc02186.jpg"
-  },
-  {
-    "id": "pub",
-    "icon": "📺",
-    "tag": "04 · Marque",
-    "title": "Publicité & Brand content",
-    "text": "Spots TV, contenus social media, films corporate : votre marque sublimée en images.",
-    "detail": "Spots TV, films corporate, contenus pour réseaux sociaux : nous traduisons l'ADN de votre marque en images fortes, avec un workflow publicitaire maîtrisé.",
-    "items": [
-      "Concepts créatifs & storyboard",
-      "Production agence / directe marque",
-      "Formats TV, web, social (16:9, 9:16, 1:1)",
-      "Livraison multi-formats & langues"
-    ],
-    "image": "images/uploads/posters/iqos-steve-aoki.jpg"
+      "Clips & live sessions",
+      "Mise en scène et lumière",
+      "Maquillage SFX en collaboration",
+      "Teasers & formats réseaux"
+    ]
   },
   {
     "id": "event",
-    "icon": "🎉",
-    "tag": "05 · Événementiel",
-    "title": "Événementiel & Live",
-    "text": "Mariages, concerts, conférences : captation multi-caméras et diffusion en direct.",
-    "detail": "Mariages, séminaires, concerts, lancements produits : captation multi-caméras, régie mobile, diffusion en direct et montage rapide pour les réseaux.",
+    "icon": "",
+    "tag": "04 — Événementiel",
+    "title": "Événementiel, corporate & mariages",
+    "text": "Aftermovies, soirées, conférences et mariages.",
+    "detail": "Nous captons l'énergie d'un événement et la transformons en film : aftermovies, soirées, conférences, contenus corporate et films de mariage.",
+    "image": "media/work/ift-event/poster.jpg",
     "items": [
-      "Multi-caméras jusqu'à 6 sources",
-      "Régie mobile HD / 4K en direct",
-      "Drone & travelling",
-      "After-movie sous 24-72h"
-    ],
-    "image": "images/uploads/posters/crj-club-rugby.jpg"
+      "Aftermovies & soirées",
+      "Conférences et contenus corporate",
+      "Films de mariage",
+      "Captation multi-caméras"
+    ]
+  },
+  {
+    "id": "photo",
+    "icon": "",
+    "tag": "05 — Photo",
+    "title": "Photographie",
+    "text": "Campagnes, portraits, mode et coulisses.",
+    "detail": "Shootings mode et beauté, portraits d'artistes, photos de campagne et coulisses de tournage, avec la même exigence de lumière et de couleur que nos films.",
+    "image": "images/gallery/a7401895.jpg",
+    "items": [
+      "Mode & beauté",
+      "Portraits d'artistes",
+      "Photos de campagne",
+      "Coulisses & making-of"
+    ]
   },
   {
     "id": "post",
-    "icon": "🎛️",
-    "tag": "06 · Studio",
-    "title": "Post-production",
-    "text": "Montage, étalonnage, VFX, sound design : un studio complet pour sublimer vos rushes.",
-    "detail": "Le studio OSC'ART Production prend en charge vos rushes : montage, étalonnage, VFX, mastering audio. Nous travaillons sur DaVinci Resolve, Premiere Pro et After Effects.",
+    "icon": "",
+    "tag": "06 — Post-production",
+    "title": "Post-production, CGI & IA",
+    "text": "Montage, étalonnage, 3D et génération vidéo.",
+    "detail": "Montage, étalonnage sous DaVinci Resolve, sound design et motion. Pour aller plus loin : modélisation 3D sous Blender et génération vidéo par IA, intégrées à de vraies images.",
+    "image": "media/work/siwar-maalej/poster.jpg",
     "items": [
-      "Montage offline & online",
-      "Étalonnage HDR / SDR",
-      "VFX & compositing",
-      "Sound design, mixage 5.1, dubbing"
-    ],
-    "image": "images/gallery/img_0903.jpg"
+      "Montage & étalonnage",
+      "Sound design",
+      "3D & CGI (Blender)",
+      "Génération vidéo par IA"
+    ]
   }
 ]
