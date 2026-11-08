@@ -1,0 +1,10 @@
+{
+  "name": "oscart-production-site",
+  "private": true,
+  "description": "Site OSC'ART Production — fonctions Vercel (CMS OAuth, assistant IA)",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.6.0",
+    "@google/genai": "^3.0.0"
+  }
+}

@@ -6,3 +6,5 @@ portfolio/photos/
 .DS_Store
 *.log
 .vercel
+
+node_modules/
