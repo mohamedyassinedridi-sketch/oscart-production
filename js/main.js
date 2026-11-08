@@ -104,15 +104,27 @@
     '</article>';
   }
 
+  function loadPreview(el){
+    var p = PROJECTS[+el.dataset.i]; if(!p || !p.preview) return null;
+    var v = el.querySelector('video'); if(!v) return null;
+    if(!v.getAttribute('src')){ v.preload = 'auto'; v.muted = true; v.src = url(p.preview); }
+    return v;
+  }
   function startPreview(el){
-    var p = PROJECTS[+el.dataset.i]; if(!p || !p.preview || saveData) return;
-    var v = el.querySelector('video'); if(!v) return;
-    if(!v.getAttribute('src')) v.src = url(p.preview);
-    var pr = v.play();
-    if(pr && pr.then) pr.then(function(){ el.classList.add('playing'); }).catch(function(){});
+    if(saveData) return;
+    var v = loadPreview(el); if(!v) return;
+    el.dataset.want = '1';
+    var go = function(){
+      if(el.dataset.want !== '1') return;
+      var pr = v.play();
+      if(pr && pr.then) pr.then(function(){ if(el.dataset.want === '1') el.classList.add('playing'); }).catch(function(){});
+      else el.classList.add('playing');
+    };
+    if(v.readyState >= 3) go(); else v.addEventListener('canplay', go, { once:true });
   }
   function stopPreview(el){
     var v = el.querySelector('video');
+    el.dataset.want = '';
     el.classList.remove('playing');
     if(v && !v.paused) v.pause();
   }
@@ -127,6 +139,14 @@
         el.addEventListener('mouseleave', function(){ stopPreview(el); });
       }
     });
+    /* Ordinateur : on précharge l'aperçu (≈0,7 Mo) des cartes proches de l'écran,
+       pour que la vidéo parte dès que la souris passe dessus */
+    if(canHover && !saveData && 'IntersectionObserver' in window){
+      var pio = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if(e.isIntersecting){ loadPreview(e.target); pio.unobserve(e.target); } });
+      }, { rootMargin: '300px 0px' });
+      cards.forEach(function(c){ pio.observe(c); });
+    }
     /* Mobile / tactile : un seul aperçu à la fois, celui le plus visible */
     if(!canHover && 'IntersectionObserver' in window && !reduceMotion){
       var ratios = new Map(), current = null;
