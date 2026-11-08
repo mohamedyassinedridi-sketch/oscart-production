@@ -152,18 +152,62 @@ async function streamClaude(system, messages, send) {
   return 'claude';
 }
 
+/* Modèles Gemini de secours : découverts une fois via l'API (ceux que la clé peut utiliser) */
+let geminiCandidates = null;
+async function geminiModels(ai) {
+  if (geminiCandidates) return geminiCandidates;
+  const names = [];
+  try {
+    const pager = await ai.models.list();
+    for await (const m of pager) {
+      const n = String(m.name || '').replace(/^models\//, '');
+      const acts = m.supportedActions || [];
+      if (!/^gemini/.test(n) || (acts.length && acts.indexOf('generateContent') < 0)) continue;
+      if (/(image|tts|audio|live|embed|vision|robotics|computer|thinking-exp)/.test(n)) continue;
+      names.push(n);
+    }
+  } catch (e) { console.error('[assistant] liste des modèles Gemini indisponible :', e && e.message); }
+  const score = (n) => (/flash/.test(n) ? 0 : /pro/.test(n) ? 2 : 1) + (/lite/.test(n) ? 0.5 : 0) + (/preview|exp/.test(n) ? 0.3 : 0);
+  names.sort((a, b) => score(a) - score(b) || b.localeCompare(a, 'en', { numeric: true }));
+  geminiCandidates = names;
+  return names;
+}
+
 async function streamGemini(system, messages, send) {
   const { GoogleGenAI } = await import('@google/genai');
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  const response = await ai.models.generateContentStream({
-    model: GEMINI_MODEL,
-    contents: messages.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
-    config: { systemInstruction: system, maxOutputTokens: 4000 },
-  });
-  for await (const chunk of response) {
-    if (chunk.text) send({ t: chunk.text });
+  const contents = messages.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
+  const extra = (process.env.GEMINI_FALLBACK_MODELS || '').split(',').map((x) => x.trim()).filter(Boolean);
+  let order = [GEMINI_MODEL].concat(extra);
+  let lastErr = null, discovered = false;
+  for (let i = 0; i < order.length && i < 5; i++) {
+    const model = order[i];
+    let wrote = false;
+    try {
+      const response = await ai.models.generateContentStream({
+        model,
+        contents,
+        config: { systemInstruction: system, maxOutputTokens: 4000 },
+      });
+      for await (const chunk of response) {
+        if (chunk.text) { wrote = true; send({ t: chunk.text }); }
+      }
+      if (wrote) return 'gemini:' + model;
+      lastErr = new Error('réponse vide');
+    } catch (err) {
+      lastErr = err;
+      if (wrote) throw err; // réponse déjà commencée : on ne recommence pas avec un autre modèle
+      const st = Number(err && (err.status || err.code)) || 0;
+      console.error('[assistant] gemini ' + model + ' :', st, String(err && err.message).slice(0, 160));
+      // Surcharge, quota ou modèle inconnu : on tente un autre modèle Gemini
+      if (st && [404, 429, 500, 503].indexOf(st) < 0) throw err;
+    }
+    if (i === order.length - 1 && !discovered) {
+      discovered = true;
+      (await geminiModels(ai)).forEach((n) => { if (order.indexOf(n) < 0) order.push(n); });
+    }
   }
-  return 'gemini';
+  throw lastErr || new Error('gemini indisponible');
 }
 
 /* ---------- Handler ---------- */
