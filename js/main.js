@@ -356,11 +356,40 @@
     });
   }
 
+  /* ---------- Vidéos d'ambiance (services) ----------
+     Page Services : lecture automatique quand le visuel est à l'écran.
+     Accueil (tuiles) : au survol sur ordinateur, à l'écran sur mobile. */
+  function ambient(){
+    if(saveData || reduceMotion) return;
+    function play(v){
+      if(!v.getAttribute('src')){ v.preload = 'auto'; v.src = v.dataset.src; }
+      v.muted = true;
+      var pr = v.play();
+      if(pr && pr.then) pr.then(function(){ v.classList.add('on'); }).catch(function(){});
+    }
+    function stop(v){ v.classList.remove('on'); if(!v.paused) v.pause(); }
+    var auto = [].slice.call(doc.querySelectorAll('.service-visual video[data-src]'));
+    var hoverTiles = [].slice.call(doc.querySelectorAll('.svc video[data-src]'));
+    if(!canHover){ auto = auto.concat(hoverTiles); hoverTiles = []; }
+    if(auto.length && 'IntersectionObserver' in window){
+      var io = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if(e.isIntersecting) play(e.target); else stop(e.target); });
+      }, { threshold: .35 });
+      auto.forEach(function(v){ io.observe(v); });
+    }
+    hoverTiles.forEach(function(v){
+      var tile = v.closest('.svc');
+      tile.addEventListener('mouseenter', function(){ play(v); });
+      tile.addEventListener('mouseleave', function(){ stop(v); });
+    });
+  }
+
   /* ---------- Démarrage une fois les données chargées ---------- */
   function start(){
     var D = window.OscartData.data();
     PROJECTS = (D.portfolio || []).filter(function(p){ return p && p.title && (p.poster || p.preview); });
     renderWork();
+    ambient();
     applyContact(D.site);
     /* Équipe : visible seulement avec de vrais membres (pas de modèle « [Nom …] ») */
     var team = (D.team || []).filter(function(m){ return m && m.name && !/^\s*\[/.test(m.name); });

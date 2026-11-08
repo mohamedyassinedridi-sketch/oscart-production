@@ -12,7 +12,8 @@
       "Activations et événements de marque",
       "Direction artistique & stylisme",
       "Déclinaisons multi-formats"
-    ]
+    ],
+    "video": "media/work/iqos-iluma-steve-aoki/preview.mp4"
   },
   {
     "id": "social",
@@ -27,7 +28,8 @@
       "Formats 9:16, 4:5 et 16:9",
       "Séries de contenus pour marques",
       "Sous-titrage et motion design"
-    ]
+    ],
+    "video": "media/work/the-w-store/preview.mp4"
   },
   {
     "id": "clips",
@@ -42,7 +44,8 @@
       "Mise en scène et lumière",
       "Maquillage SFX en collaboration",
       "Teasers & formats réseaux"
-    ]
+    ],
+    "video": "media/work/yfz-band-live/preview.mp4"
   },
   {
     "id": "event",
@@ -57,7 +60,8 @@
       "Conférences et contenus corporate",
       "Films de mariage",
       "Captation multi-caméras"
-    ]
+    ],
+    "video": "media/work/ift-event/preview.mp4"
   },
   {
     "id": "photo",
@@ -72,7 +76,8 @@
       "Portraits d'artistes",
       "Photos de campagne",
       "Coulisses & making-of"
-    ]
+    ],
+    "video": ""
   },
   {
     "id": "post",
@@ -87,6 +92,7 @@
       "Sound design",
       "3D & CGI (Blender)",
       "Génération vidéo par IA"
-    ]
+    ],
+    "video": "media/work/siwar-maalej/preview.mp4"
   }
 ]

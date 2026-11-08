@@ -36,8 +36,13 @@
     return (over === undefined || over === '') ? base : over;
   }
 
+  /* Les brouillons de admin.html (stockés dans le navigateur) ne servent qu'en local.
+     Sur le site public, les données publiées (data/*.json) priment toujours :
+     un ancien brouillon resté dans un navigateur ne doit jamais masquer le site. */
+  var IS_LOCAL = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   function loadLocal(){
     try{
+      if(!IS_LOCAL){ localStorage.removeItem(KEY); return null; }
       var raw = JSON.parse(localStorage.getItem(KEY));
       if(!raw) return null;
       if(!raw.site){ raw = { site: raw }; }
@@ -480,6 +485,7 @@
         '<p style="margin-top:30px"><a class="link-arrow" href="contact.html">Demander un devis →</a></p></div>' +
         '<div class="service-visual visual-' + ((i % 6) + 1) + (s.image ? ' has-img' : '') + '">' +
           (s.image ? '<img loading="lazy" src="' + esc(encodeURI(s.image)) + '" alt="' + esc(s.title) + '">' : '') +
+          (s.video ? '<video muted loop playsinline preload="none" aria-hidden="true" data-src="' + esc(encodeURI(s.video)) + '"></video>' : '') +
         '</div></div>';
     }).join('');
   }
