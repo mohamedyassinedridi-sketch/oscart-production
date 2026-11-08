@@ -154,6 +154,7 @@ async function streamClaude(system, messages, send) {
 
 /* Modèles Gemini de secours : découverts une fois via l'API (ceux que la clé peut utiliser) */
 let geminiCandidates = null;
+let geminiWorking = '';
 async function geminiModels(ai) {
   if (geminiCandidates) return geminiCandidates;
   const names = [];
@@ -177,8 +178,8 @@ async function streamGemini(system, messages, send) {
   const { GoogleGenAI } = await import('@google/genai');
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const contents = messages.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
-  const extra = (process.env.GEMINI_FALLBACK_MODELS || '').split(',').map((x) => x.trim()).filter(Boolean);
-  let order = [GEMINI_MODEL].concat(extra);
+  const extra = (process.env.GEMINI_FALLBACK_MODELS || 'gemini-3.6-flash').split(',').map((x) => x.trim()).filter(Boolean);
+  let order = [geminiWorking, GEMINI_MODEL].concat(extra).filter((m, i, a) => m && a.indexOf(m) === i);
   let lastErr = null, discovered = false;
   for (let i = 0; i < order.length && i < 5; i++) {
     const model = order[i];
@@ -192,7 +193,7 @@ async function streamGemini(system, messages, send) {
       for await (const chunk of response) {
         if (chunk.text) { wrote = true; send({ t: chunk.text }); }
       }
-      if (wrote) return 'gemini:' + model;
+      if (wrote) { geminiWorking = model; return 'gemini:' + model; }
       lastErr = new Error('réponse vide');
     } catch (err) {
       lastErr = err;
@@ -201,6 +202,7 @@ async function streamGemini(system, messages, send) {
       console.error('[assistant] gemini ' + model + ' :', st, String(err && err.message).slice(0, 160));
       // Surcharge, quota ou modèle inconnu : on tente un autre modèle Gemini
       if (st && [404, 429, 500, 503].indexOf(st) < 0) throw err;
+      if (model === geminiWorking) geminiWorking = '';
     }
     if (i === order.length - 1 && !discovered) {
       discovered = true;
@@ -259,6 +261,7 @@ module.exports = async function handler(req, res) {
   let sent = false;
   const send = (obj) => { sent = true; res.write('data: ' + JSON.stringify(obj) + '\n\n'); };
 
+  res.write(': ok\n\n');
   const system = systemPrompt(await knowledge(origin));
   for (const p of providers) {
     try {
