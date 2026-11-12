@@ -441,3 +441,10 @@ button{font:inherit;color:inherit}
   .ai-chat.is-open{right:0;bottom:0;left:0}
 }
 .menu-open .ai-chat,.player.open ~ .ai-chat{display:none}
+
+/* Notre histoire — depuis 2019 */
+.origin .split{grid-template-columns:minmax(0,4fr) minmax(0,7fr);align-items:center}
+.origin .media{aspect-ratio:9/16;max-width:400px;width:100%}
+.origin-year{font-family:var(--font-display);font-size:clamp(4.5rem,13vw,10rem)!important;line-height:.9!important;color:var(--gold)!important;margin:.1em 0 .15em;letter-spacing:-.02em}
+.origin h2{margin:0 0 .6em}
+@media (max-width:900px){.origin .split{grid-template-columns:1fr}.origin .media{max-width:340px;margin:0 auto}}
