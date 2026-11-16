@@ -1,6 +1,21 @@
 {
   "portfolio": [
     {
+      "slug": "coach-amine-run",
+      "title": "Coach Amine — Run",
+      "category": "sport",
+      "client": "Coach Amine",
+      "subtitle": "Film sport · Tapis de course en studio",
+      "format": "v",
+      "poster": "media/work/coach-amine-run/poster.jpg",
+      "preview": "media/work/coach-amine-run/preview.mp4",
+      "video": "media/work/coach-amine-run/full.mp4",
+      "excerpt": false,
+      "instagram": "",
+      "featured": true,
+      "duration": 17
+    },
+    {
       "slug": "showreel-pub-food",
       "title": "OSC'ART — Reel Produit & Food",
       "category": "pub",
